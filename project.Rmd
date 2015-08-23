@@ -1,0 +1,80 @@
+---
+title: "Course Project for Practical Machine Learning class in Coursera"
+author: "Joe DeWitt"
+output: html_document
+---
+
+The objective of this study is to predict how well an excercise was performed using a dataset containing a target variable called 'classe' and several predictors measuring accelerometer readings on the belt, forearm, arm and dumbell of participants.
+
+### Variable Selection
+The majority of the 160 variables are very sparse. The first step in variable selection is to filter out variables that contains little or no information.
+
+After analyzing the predictor variables, only the following were selected to be inluded in the model:
+
+```{r, echo=TRUE}
+predictors <- c( "user_name", "num_window", 
+                 "roll_belt", "pitch_belt","yaw_belt","total_accel_belt",
+                 "gyros_belt_x","gyros_belt_y","gyros_belt_z",
+                 "accel_belt_x","accel_belt_y","accel_belt_z",
+                 "magnet_belt_x","magnet_belt_y","magnet_belt_z",
+                 "roll_arm",  "pitch_arm", "yaw_arm",	"total_accel_arm",
+                 "gyros_arm_x", "gyros_arm_y",	"gyros_arm_z",	
+                 "accel_arm_x",	"accel_arm_y",	"accel_arm_z",	
+                 "magnet_arm_x",	"magnet_arm_y",	"magnet_arm_z",
+                 "roll_dumbbell", "pitch_dumbbell",	"yaw_dumbbell", "total_accel_dumbbell",
+                 "gyros_dumbbell_x","gyros_dumbbell_y",	"gyros_dumbbell_z",	
+                 "accel_dumbbell_x",	"accel_dumbbell_y",	"accel_dumbbell_z",	
+                 "magnet_dumbbell_x",	"magnet_dumbbell_y","magnet_dumbbell_z",
+                 "roll_forearm", "pitch_forearm",	"yaw_forearm", "total_accel_forearm",
+                 "gyros_forearm_x", "gyros_forearm_y", "gyros_forearm_z",
+                 "accel_forearm_x", "accel_forearm_y", "accel_forearm_z",	
+                 "magnet_forearm_x",	"magnet_forearm_y",	"magnet_forearm_z"
+                )
+```
+
+### Covariate Analysis
+Since the means of selected predictors are not centered around zero and the ranges of the values varied substantially between variables, the next step is to pre process the data by centering and scaling the predictors.
+
+To ensure that the exact same pre processing is performed on both the TRAIN and TEST partition of the training data, as well as the test data, the pre processing steps are wrapped in a reuable function that handled the existence of the target variable.
+
+### Model Selection
+Since the preditors are all numeric we need a regression model. I decided on a regression tree since trees are tolerant to outliers. To improve the overall tree performance a random forest was selected. Regression trees cannot handle missing variables and therefore we have to impute missing values for the predictors.
+
+### Model Performance
+To evaluate the performance of the model, the TRAIN data set was partitioned into a training and testing data sets:
+
+```{r, eval=FALSE, echo=TRUE}
+inTrain <- createDataPartition(y=data$classe, p=0.7, list=FALSE)
+training <- data[inTrain,]
+testing <- data[-inTrain,]
+```
+
+The model performed very well on the training set with zero in-sample errors:
+
+```{r, eval=FALSE, echo=TRUE}
+          Reference
+Prediction   A   B   C   D   E
+         A 242   0   0   0   0
+         B   0 168   0   0   0
+         C   0   0 151   0   0
+         D   0   0   0 141   0
+         E   0   0   0   0 155
+```
+
+It didn't perform as well with the training partition:
+
+```{r, eval=FALSE, echo=TRUE}
+          Reference
+Prediction   A   B   C   D   E
+         A 237   7   1   0   0
+         B   1 152   8   1   1
+         C   1   3 140   7   1
+         D   1   2   0 132   0
+         E   0   0   0   0 153
+
+Overall Statistics
+                                          
+               Accuracy : 0.9599   
+```
+
+The model didn't perform as well on the out-of-sample data set due to overtraining on the training data.

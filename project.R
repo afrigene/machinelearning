@@ -1,5 +1,6 @@
 library(caret)
 library(data.table)
+library(pROC)
 
 predictors <- c( "user_name", "num_window", 
                  "roll_belt", "pitch_belt","yaw_belt","total_accel_belt",
@@ -49,9 +50,11 @@ preprocess <- function(data, train=TRUE)
   result
 }
 
-
 # Read training data
 data <- read.csv(file="pml-training.csv", header=TRUE, )
+
+# Cross Validation on Predictor Variables
+summary(data)
 
 # Partition data in TRAIN and TEST sets
 inTrain <- createDataPartition(y=data$classe, p=0.7, list=FALSE)
@@ -85,6 +88,8 @@ holdout_data <- preprocess(holdout[,predictors], train=FALSE)
 answers <- predict(modelFit, newdata = holdout_data)
 
 
+# Create submission files
+#######################################
 pml_write_files = function(x){
   n = length(x)
   for(i in 1:n){
