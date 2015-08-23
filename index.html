@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Course Project for Practical Machine Learning class in Coursera by afrigene</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Course Project for Practical Machine Learning class in Coursera</h1>
+      <h2 class="project-tagline"></h2>
+      <a href="https://github.com/afrigene/machinelearning" class="btn">View on GitHub</a>
+      <a href="https://github.com/afrigene/machinelearning/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/afrigene/machinelearning/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <p>The objective of this study is to predict how well an excercise was performed using a dataset containing a target variable called 'classe' and several predictors measuring accelerometer readings on the belt, forearm, arm and dumbell of participants.</p>
+
+<h3>
+<a id="variable-selection" class="anchor" href="#variable-selection" aria-hidden="true"><span class="octicon octicon-link"></span></a>Variable Selection</h3>
+
+<p>The majority of the 160 variables are very sparse. The first step in variable selection is to filter out variables that contains little or no information.</p>
+
+<p>After analyzing the predictor variables, only the following were selected to be inluded in the model:</p>
+
+<div class="highlight highlight-r,"><pre><span class="pl-smi">predictors</span> <span class="pl-k">&lt;-</span> c( <span class="pl-s"><span class="pl-pds">"</span>user_name<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>num_window<span class="pl-pds">"</span></span>, 
+                 <span class="pl-s"><span class="pl-pds">"</span>roll_belt<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>pitch_belt<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>yaw_belt<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>total_accel_belt<span class="pl-pds">"</span></span>,
+                 <span class="pl-s"><span class="pl-pds">"</span>gyros_belt_x<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>gyros_belt_y<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>gyros_belt_z<span class="pl-pds">"</span></span>,
+                 <span class="pl-s"><span class="pl-pds">"</span>accel_belt_x<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>accel_belt_y<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>accel_belt_z<span class="pl-pds">"</span></span>,
+                 <span class="pl-s"><span class="pl-pds">"</span>magnet_belt_x<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>magnet_belt_y<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>magnet_belt_z<span class="pl-pds">"</span></span>,
+                 <span class="pl-s"><span class="pl-pds">"</span>roll_arm<span class="pl-pds">"</span></span>,  <span class="pl-s"><span class="pl-pds">"</span>pitch_arm<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>yaw_arm<span class="pl-pds">"</span></span>,   <span class="pl-s"><span class="pl-pds">"</span>total_accel_arm<span class="pl-pds">"</span></span>,
+                 <span class="pl-s"><span class="pl-pds">"</span>gyros_arm_x<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>gyros_arm_y<span class="pl-pds">"</span></span>,  <span class="pl-s"><span class="pl-pds">"</span>gyros_arm_z<span class="pl-pds">"</span></span>,  
+                 <span class="pl-s"><span class="pl-pds">"</span>accel_arm_x<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>accel_arm_y<span class="pl-pds">"</span></span>,  <span class="pl-s"><span class="pl-pds">"</span>accel_arm_z<span class="pl-pds">"</span></span>,  
+                 <span class="pl-s"><span class="pl-pds">"</span>magnet_arm_x<span class="pl-pds">"</span></span>,    <span class="pl-s"><span class="pl-pds">"</span>magnet_arm_y<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>magnet_arm_z<span class="pl-pds">"</span></span>,
+                 <span class="pl-s"><span class="pl-pds">"</span>roll_dumbbell<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>pitch_dumbbell<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>yaw_dumbbell<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>total_accel_dumbbell<span class="pl-pds">"</span></span>,
+                 <span class="pl-s"><span class="pl-pds">"</span>gyros_dumbbell_x<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>gyros_dumbbell_y<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>gyros_dumbbell_z<span class="pl-pds">"</span></span>, 
+                 <span class="pl-s"><span class="pl-pds">"</span>accel_dumbbell_x<span class="pl-pds">"</span></span>,    <span class="pl-s"><span class="pl-pds">"</span>accel_dumbbell_y<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>accel_dumbbell_z<span class="pl-pds">"</span></span>, 
+                 <span class="pl-s"><span class="pl-pds">"</span>magnet_dumbbell_x<span class="pl-pds">"</span></span>,   <span class="pl-s"><span class="pl-pds">"</span>magnet_dumbbell_y<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>magnet_dumbbell_z<span class="pl-pds">"</span></span>,
+                 <span class="pl-s"><span class="pl-pds">"</span>roll_forearm<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>pitch_forearm<span class="pl-pds">"</span></span>,   <span class="pl-s"><span class="pl-pds">"</span>yaw_forearm<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>total_accel_forearm<span class="pl-pds">"</span></span>,
+                 <span class="pl-s"><span class="pl-pds">"</span>gyros_forearm_x<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>gyros_forearm_y<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>gyros_forearm_z<span class="pl-pds">"</span></span>,
+                 <span class="pl-s"><span class="pl-pds">"</span>accel_forearm_x<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>accel_forearm_y<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>accel_forearm_z<span class="pl-pds">"</span></span>,   
+                 <span class="pl-s"><span class="pl-pds">"</span>magnet_forearm_x<span class="pl-pds">"</span></span>,    <span class="pl-s"><span class="pl-pds">"</span>magnet_forearm_y<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>magnet_forearm_z<span class="pl-pds">"</span></span>
+                )</pre></div>
+
+<h3>
+<a id="covariate-analysis" class="anchor" href="#covariate-analysis" aria-hidden="true"><span class="octicon octicon-link"></span></a>Covariate Analysis</h3>
+
+<p>Since the means of selected predictors are not centered around zero and the ranges of the values varied substantially between variables, the next step is to pre process the data by centering and scaling the predictors.</p>
+
+<p>To ensure that the exact same pre processing is performed on both the TRAIN and TEST partition of the training data, as well as the test data, the pre processing steps are wrapped in a reuable function that handled the existence of the target variable.</p>
+
+<h3>
+<a id="model-selection" class="anchor" href="#model-selection" aria-hidden="true"><span class="octicon octicon-link"></span></a>Model Selection</h3>
+
+<p>Since the preditors are all numeric we need a regression model. I decided on a regression tree since trees are tolerant to outliers. To improve the overall tree performance a random forest was selected. Regression trees cannot handle missing variables and therefore we have to impute missing values for the predictors.</p>
+
+<h3>
+<a id="model-performance" class="anchor" href="#model-performance" aria-hidden="true"><span class="octicon octicon-link"></span></a>Model Performance</h3>
+
+<p>To evaluate the performance of the model, the TRAIN data set was partitioned into a training and testing data sets:</p>
+
+<div class="highlight highlight-r,"><pre><span class="pl-smi">inTrain</span> <span class="pl-k">&lt;-</span> createDataPartition(<span class="pl-v">y</span><span class="pl-k">=</span><span class="pl-smi">data</span><span class="pl-k">$</span><span class="pl-smi">classe</span>, <span class="pl-v">p</span><span class="pl-k">=</span><span class="pl-c1">0.7</span>, <span class="pl-v">list</span><span class="pl-k">=</span><span class="pl-c1">FALSE</span>)
+<span class="pl-smi">training</span> <span class="pl-k">&lt;-</span> <span class="pl-smi">data</span>[<span class="pl-smi">inTrain</span>,]
+<span class="pl-smi">testing</span> <span class="pl-k">&lt;-</span> <span class="pl-smi">data</span>[<span class="pl-k">-</span><span class="pl-smi">inTrain</span>,]</pre></div>
+
+<p>The model performed very well on the training set with zero in-sample errors:</p>
+
+<div class="highlight highlight-r,"><pre>          <span class="pl-smi">Reference</span>
+<span class="pl-smi">Prediction</span>   <span class="pl-smi">A</span>   <span class="pl-smi">B</span>   <span class="pl-smi">C</span>   <span class="pl-smi">D</span>   <span class="pl-smi">E</span>
+         <span class="pl-smi">A</span> <span class="pl-c1">242</span>   <span class="pl-c1">0</span>   <span class="pl-c1">0</span>   <span class="pl-c1">0</span>   <span class="pl-c1">0</span>
+         <span class="pl-smi">B</span>   <span class="pl-c1">0</span> <span class="pl-c1">168</span>   <span class="pl-c1">0</span>   <span class="pl-c1">0</span>   <span class="pl-c1">0</span>
+         <span class="pl-smi">C</span>   <span class="pl-c1">0</span>   <span class="pl-c1">0</span> <span class="pl-c1">151</span>   <span class="pl-c1">0</span>   <span class="pl-c1">0</span>
+         <span class="pl-smi">D</span>   <span class="pl-c1">0</span>   <span class="pl-c1">0</span>   <span class="pl-c1">0</span> <span class="pl-c1">141</span>   <span class="pl-c1">0</span>
+         <span class="pl-smi">E</span>   <span class="pl-c1">0</span>   <span class="pl-c1">0</span>   <span class="pl-c1">0</span>   <span class="pl-c1">0</span> <span class="pl-c1">155</span></pre></div>
+
+<p>It didn't perform as well with the training partition:</p>
+
+<div class="highlight highlight-r,"><pre>          <span class="pl-smi">Reference</span>
+<span class="pl-smi">Prediction</span>   <span class="pl-smi">A</span>   <span class="pl-smi">B</span>   <span class="pl-smi">C</span>   <span class="pl-smi">D</span>   <span class="pl-smi">E</span>
+         <span class="pl-smi">A</span> <span class="pl-c1">237</span>   <span class="pl-c1">7</span>   <span class="pl-c1">1</span>   <span class="pl-c1">0</span>   <span class="pl-c1">0</span>
+         <span class="pl-smi">B</span>   <span class="pl-c1">1</span> <span class="pl-c1">152</span>   <span class="pl-c1">8</span>   <span class="pl-c1">1</span>   <span class="pl-c1">1</span>
+         <span class="pl-smi">C</span>   <span class="pl-c1">1</span>   <span class="pl-c1">3</span> <span class="pl-c1">140</span>   <span class="pl-c1">7</span>   <span class="pl-c1">1</span>
+         <span class="pl-smi">D</span>   <span class="pl-c1">1</span>   <span class="pl-c1">2</span>   <span class="pl-c1">0</span> <span class="pl-c1">132</span>   <span class="pl-c1">0</span>
+         <span class="pl-smi">E</span>   <span class="pl-c1">0</span>   <span class="pl-c1">0</span>   <span class="pl-c1">0</span>   <span class="pl-c1">0</span> <span class="pl-c1">153</span>
+
+<span class="pl-smi">Overall</span> <span class="pl-smi">Statistics</span>
+
+               <span class="pl-smi">Accuracy</span> <span class="pl-k">:</span> <span class="pl-c1">0.9599</span>   </pre></div>
+
+<p>The model didn't perform as well on the out-of-sample data set due to overtraining on the training data.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/afrigene/machinelearning">Course Project for Practical Machine Learning class in Coursera</a> is maintained by <a href="https://github.com/afrigene">afrigene</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
